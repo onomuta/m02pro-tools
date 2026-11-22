@@ -1,0 +1,1221 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>M02 Pro プリントスタジオ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Noto+Serif+JP:wght@600&family=Dela+Gothic+One&family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --desk:#C8CDD3;
+  --desk-hi:#D6DADF;
+  --panel:#F2F3F5;
+  --field:#FFFFFF;
+  --field-2:#E4E7EB;
+  --line:#D3D7DC;
+  --text:#22262B;
+  --muted:#6A717A;
+  --accent:#2343E0;
+  --accent-soft:rgba(35,67,224,.12);
+  --on-accent:#FFFFFF;
+  --slot:#1C1F23;
+  --ok:#1F9D5B;
+  --warn:#C98A12;
+  --danger:#C8372D;
+  --shadow:rgba(28,34,44,.20);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --desk:#202327;
+    --desk-hi:#2A2E33;
+    --panel:#2B2F34;
+    --field:#24272B;
+    --field-2:#1D2023;
+    --line:#3A3F45;
+    --text:#E7E9EC;
+    --muted:#9AA1AA;
+    --accent:#6F87FF;
+    --accent-soft:rgba(111,135,255,.16);
+    --on-accent:#0D1230;
+    --slot:#0C0D0F;
+    --shadow:rgba(0,0,0,.55);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --desk:#202327; --desk-hi:#2A2E33; --panel:#2B2F34; --field:#24272B; --field-2:#1D2023;
+  --line:#3A3F45; --text:#E7E9EC; --muted:#9AA1AA; --accent:#6F87FF; --accent-soft:rgba(111,135,255,.16); --on-accent:#0D1230;
+  --slot:#0C0D0F; --shadow:rgba(0,0,0,.55);
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0}
+body{
+  background:var(--desk);
+  color:var(--text);
+  font-family:"Zen Kaku Gothic New","Hiragino Sans","Hiragino Kaku Gothic ProN",system-ui,sans-serif;
+  font-size:14px;line-height:1.6;
+  font-feature-settings:"palt";
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.app{display:grid;grid-template-rows:56px minmax(0,1fr);height:100%}
+
+/* header */
+header{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:0 16px 0 20px;background:var(--panel);border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand svg{flex:none}
+.brand h1{font-size:15px;font-weight:700;margin:0;white-space:nowrap;letter-spacing:.01em}
+.brand h1 span{font-weight:500;color:var(--muted);margin-left:.5em}
+
+.conn{display:flex;align-items:center;gap:10px}
+.conn-state{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);white-space:nowrap}
+.conn-state b{color:var(--text);font-weight:500}
+.dot{width:8px;height:8px;border-radius:50%;background:#9AA1AA;flex:none}
+.dot[data-s="on"]{background:var(--ok);box-shadow:0 0 0 3px rgba(31,157,91,.18)}
+.dot[data-s="busy"]{background:var(--warn);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+
+.btn{
+  height:34px;padding:0 14px;border-radius:9px;border:1px solid var(--line);
+  background:var(--field);cursor:pointer;font-size:13px;font-weight:500;white-space:nowrap;
+}
+.btn:hover{border-color:color-mix(in srgb,var(--text) 30%,var(--line))}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+
+/* layout */
+main{display:grid;grid-template-columns:minmax(0,1fr) 360px;min-height:0}
+aside.panel{
+  background:var(--panel);border-left:1px solid var(--line);
+  display:flex;flex-direction:column;min-height:0;order:2;
+}
+.panel-scroll{overflow:auto;flex:1;padding:4px 20px 20px;overscroll-behavior:contain}
+.group{padding:18px 0 20px;border-bottom:1px solid var(--line)}
+.group:last-child{border-bottom:0}
+.group h2{font-size:13px;font-weight:700;margin:0 0 12px;display:flex;justify-content:space-between;align-items:baseline}
+.group h2 small{font-weight:400;color:var(--muted);font-size:12px}
+
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--field-2);border-radius:10px;padding:3px;gap:2px}
+.seg button{
+  height:30px;border:0;border-radius:8px;background:transparent;cursor:pointer;
+  font-size:13px;color:var(--muted);font-weight:500;white-space:nowrap;padding:0 8px;
+}
+.seg button[aria-pressed="true"]{background:var(--field);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.12),0 0 0 1px var(--line)}
+[data-pane]{margin-top:14px}
+
+.row{display:grid;grid-template-columns:84px minmax(0,1fr) 52px;align-items:center;gap:10px;font-size:13px;min-height:32px}
+.row label{color:var(--muted)}
+.row output{text-align:right;font-variant-numeric:tabular-nums;color:var(--text)}
+.row.two{grid-template-columns:84px minmax(0,1fr)}
+input[type=range]{width:100%;accent-color:var(--accent);margin:0}
+select,input[type=number]{
+  height:32px;border-radius:8px;border:1px solid var(--line);background:var(--field);padding:0 8px;width:100%;
+}
+textarea{
+  width:100%;min-height:96px;resize:vertical;border-radius:10px;border:1px solid var(--line);
+  background:var(--field);padding:10px 12px;line-height:1.5;
+}
+.check{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;min-height:32px}
+.check input{accent-color:var(--accent);width:16px;height:16px;margin:0}
+.stack > * + *{margin-top:6px}
+.hint{font-size:12px;color:var(--muted);margin:8px 0 0;line-height:1.55}
+.inline-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+
+/* dither picker */
+.dither-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.dither-opt{
+  border:1px solid var(--line);border-radius:10px;background:var(--field);padding:6px 6px 5px;cursor:pointer;
+  display:flex;flex-direction:column;gap:5px;text-align:left;
+}
+.dither-opt canvas{width:100%;height:auto;display:block;border-radius:5px;image-rendering:pixelated;background:#fff}
+.dither-opt span{font-size:12px;font-weight:500;padding-left:2px}
+.dither-opt[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);background:var(--accent-soft)}
+.method-params{margin-top:12px}
+
+details.adv summary{cursor:pointer;font-size:13px;font-weight:700;list-style:none;display:flex;justify-content:space-between}
+details.adv summary::-webkit-details-marker{display:none}
+details.adv summary::after{content:"+";color:var(--muted);font-weight:400}
+details.adv[open] summary::after{content:"−"}
+details.adv .inner{margin-top:12px}
+
+/* print dock */
+.dock{border-top:1px solid var(--line);padding:14px 20px 16px;background:var(--panel)}
+.dock .row{margin-bottom:6px}
+.print-btn{
+  width:100%;height:50px;border-radius:12px;border:0;background:var(--accent);color:var(--on-accent);cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:15px;font-weight:700;
+  transition:filter .15s;
+}
+.print-btn:hover{filter:brightness(1.08)}
+.print-btn:disabled{opacity:.45;cursor:default;filter:none}
+.print-btn small{font-weight:500;font-size:12px;opacity:.85;font-variant-numeric:tabular-nums}
+.print-btn.busy{background:var(--field-2);color:var(--text)}
+.progress{height:4px;border-radius:2px;background:var(--field-2);margin-top:10px;overflow:hidden;display:none}
+.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .12s linear}
+.dock.printing .progress{display:block}
+.msg{font-size:12px;margin:8px 0 0;color:var(--muted);min-height:1.55em}
+.msg[data-kind="error"]{color:var(--danger)}
+.msg[data-kind="ok"]{color:var(--ok)}
+
+/* stage */
+.stage{
+  position:relative;overflow:auto;min-height:0;order:1;
+  background:
+    radial-gradient(120% 70% at 50% 0%, var(--desk-hi), transparent 70%),
+    var(--desk);
+}
+.stage-bar{
+  position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:12px 20px;flex-wrap:wrap;
+  background:color-mix(in srgb,var(--desk) 82%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.dims{font-size:13px;font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+.dims b{color:var(--text);font-weight:700}
+.stage-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.stage-tools .seg{background:color-mix(in srgb,var(--field-2) 70%,transparent);padding:2px}
+.stage-tools .seg button{height:30px}
+.toggle[aria-pressed="true"]{background:var(--text);color:var(--panel);border-color:var(--text)}
+
+.feeder{position:relative;display:flex;flex-direction:column;align-items:center;padding:28px 56px 120px}
+.slot{
+  position:relative;z-index:3;width:calc(var(--pw) + 40px);height:24px;border-radius:12px;
+  background:linear-gradient(#2A2E33,var(--slot));
+  box-shadow:0 1px 0 rgba(255,255,255,.35) inset,0 6px 14px rgba(0,0,0,.25);
+}
+.slot::after{
+  content:"";position:absolute;left:16px;right:16px;top:10px;height:4px;border-radius:2px;background:#000;
+  box-shadow:0 1px 0 rgba(255,255,255,.08);transition:background .3s,box-shadow .3s;
+}
+.feeder.printing .slot::after{background:var(--accent);box-shadow:0 0 12px 1px var(--accent)}
+.paper-wrap{
+  position:relative;z-index:2;width:var(--pw);margin-top:-12px;overflow:hidden;
+  filter:drop-shadow(0 14px 22px var(--shadow)) drop-shadow(0 1px 1px var(--shadow));
+}
+.paper{position:relative;background:#fff;padding-top:12px;will-change:transform}
+.paper canvas{display:block;width:100%;height:auto}
+.paper::before{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:linear-gradient(90deg,rgba(0,0,0,.045),transparent 7%,transparent 93%,rgba(0,0,0,.045));
+}
+.tear{height:7px;background:
+  linear-gradient(135deg,#fff 50%,transparent 50%) 0 0/8px 8px repeat-x,
+  linear-gradient(225deg,#fff 50%,transparent 50%) 0 0/8px 8px repeat-x;}
+.zoom-1 .paper canvas{image-rendering:pixelated}
+
+.ruler{position:absolute;top:52px;left:calc(50% - var(--pw) / 2 - 36px);width:26px;pointer-events:none}
+.ruler .ticks{position:absolute;inset:0 0 0 auto;width:8px;border-right:1px solid color-mix(in srgb,var(--text) 35%,transparent)}
+.ruler span{position:absolute;right:12px;transform:translateY(-50%);font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+.empty{
+  position:absolute;inset:12px 0 0 0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;padding:20px;text-align:center;color:#6A717A;cursor:pointer;border:0;background:transparent;width:100%;
+}
+.empty strong{color:#22262B;font-size:15px}
+.empty small{font-size:12px}
+.drop-hint{
+  position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;
+  background:color-mix(in srgb,var(--accent) 18%,transparent);border:3px dashed var(--accent);
+  font-size:18px;font-weight:700;color:var(--accent);pointer-events:none;
+}
+body.dragging .drop-hint{display:flex}
+
+.toast{
+  position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;
+  background:var(--text);color:var(--panel);padding:10px 16px;border-radius:10px;font-size:13px;z-index:60;
+  transition:opacity .2s,transform .2s;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+@media (max-width: 860px){
+  .app{height:auto;min-height:100%}
+  main{grid-template-columns:1fr}
+  aside.panel{border-left:0;border-top:1px solid var(--line)}
+  .panel-scroll{overflow:visible}
+  .stage{overflow:visible}
+  .feeder{padding:20px 40px 60px}
+  .brand h1 span{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+        <rect x="2" y="5" width="22" height="9" rx="4.5" fill="currentColor"/>
+        <rect x="6" y="11" width="14" height="13" rx="1" style="fill:var(--field)" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M9 15.5h8M9 18.5h5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <h1>M02 Pro<span>プリントスタジオ</span></h1>
+    </div>
+    <div class="conn">
+      <div class="conn-state" aria-live="polite"><span class="dot" id="connDot"></span><span id="connText">未接続</span></div>
+      <button class="btn" id="connBtn">接続</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="stage" id="stage" aria-label="プレビュー">
+      <div class="stage-bar">
+        <div class="dims" id="dims">—</div>
+        <div class="stage-tools">
+          <div class="seg" data-seg="zoom" role="group" aria-label="表示サイズ">
+            <button data-value="small">小</button>
+            <button data-value="std">標準</button>
+            <button data-value="dot" title="1ドットを画面の1ピクセルで表示">ドット等倍</button>
+          </div>
+          <button class="btn toggle" id="viewBtn" aria-pressed="false" title="押している間は補正後のグレースケールを表示">階調化前</button>
+          <button class="btn" id="saveBtn">PNGで保存</button>
+        </div>
+      </div>
+      <div class="feeder" id="feeder">
+        <div class="slot" aria-hidden="true"></div>
+        <div class="ruler" id="ruler" aria-hidden="true"><div class="ticks" id="ticks"></div></div>
+        <div class="paper-wrap" id="paperWrap">
+          <div class="paper" id="paper">
+            <canvas id="out" width="624" height="400" aria-label="印刷プレビュー"></canvas>
+            <button class="empty" id="empty" hidden>
+              <strong>画像を選ぶ</strong>
+              <small>ここにドロップするか、⌘V で貼り付けできます</small>
+            </button>
+          </div>
+          <div class="tear"></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel" aria-label="設定">
+      <div class="panel-scroll">
+        <div class="group">
+          <h2>印刷するもの</h2>
+          <div class="seg" data-seg="source" role="group" aria-label="印刷するもの">
+            <button data-value="text">テキスト</button>
+            <button data-value="image">画像</button>
+            <button data-value="pattern">パターン</button>
+          </div>
+
+          <div data-pane="text" class="stack">
+            <textarea data-bind="text.value" aria-label="印刷するテキスト" spellcheck="false"></textarea>
+            <div class="row two"><label for="tFont">書体</label>
+              <select id="tFont" data-bind="text.font">
+                <option value="zenB">ゴシック 太</option>
+                <option value="zenR">ゴシック 標準</option>
+                <option value="serif">明朝</option>
+                <option value="dela">極太ゴシック</option>
+                <option value="dot">ドット</option>
+              </select>
+            </div>
+            <div class="row"><label for="tSize">文字サイズ</label><input id="tSize" type="range" min="2" max="40" step="0.5" data-bind="text.size"><output data-out="text.size"></output></div>
+            <div class="row"><label for="tLh">行間</label><input id="tLh" type="range" min="0.9" max="2.2" step="0.05" data-bind="text.lineHeight"><output data-out="text.lineHeight"></output></div>
+            <div class="row"><label for="tPad">余白</label><input id="tPad" type="range" min="0" max="10" step="0.5" data-bind="text.pad"><output data-out="text.pad"></output></div>
+            <div class="row two"><label>揃え</label>
+              <div class="seg" data-seg="text.align" role="group" aria-label="揃え">
+                <button data-value="left">左</button><button data-value="center">中央</button><button data-value="right">右</button>
+              </div>
+            </div>
+          </div>
+
+          <div data-pane="image" class="stack">
+            <div class="inline-actions" style="margin-top:0">
+              <button class="btn" id="pickBtn">画像を選ぶ</button>
+              <button class="btn" id="rotBtn" title="90度回転">回転</button>
+            </div>
+            <p class="hint" id="imgName">⌘V で貼り付け、またはプレビューにドロップもできます。</p>
+            <div class="row two"><label>長さ</label>
+              <div class="seg" data-seg="image.fit" role="group" aria-label="長さ">
+                <button data-value="auto">画像に合わせる</button><button data-value="fixed">指定する</button>
+              </div>
+            </div>
+            <div class="row" data-show="image.fit=fixed"><label for="iLen">長さ</label><input id="iLen" type="range" min="10" max="300" step="1" data-bind="image.lengthMm"><output data-out="image.lengthMm"></output></div>
+          </div>
+
+          <div data-pane="pattern" class="stack">
+            <div class="row two"><label for="pKind">種類</label>
+              <select id="pKind" data-bind="pattern.kind">
+                <option value="chart">テストチャート</option>
+                <option value="flow">等高線</option>
+                <option value="moire">モアレ</option>
+                <option value="cloud">雲</option>
+                <option value="calib">調整用チャート</option>
+              </select>
+            </div>
+            <div class="row" data-hide="pattern.kind=chart,calib"><label for="pScale">スケール</label><input id="pScale" type="range" min="5" max="100" step="1" data-bind="pattern.scale"><output data-out="pattern.scale"></output></div>
+            <div class="row" data-hide="pattern.kind=calib"><label for="pLen">長さ</label><input id="pLen" type="range" min="10" max="300" step="1" data-bind="pattern.lengthMm"><output data-out="pattern.lengthMm"></output></div>
+            <div class="inline-actions" data-hide="pattern.kind=chart,calib"><button class="btn" id="seedBtn">別のパターンにする</button></div>
+            <p class="hint" data-show="pattern.kind=chart">濃度や補正を決めるときの試し刷りに使えます。</p>
+          </div>
+        </div>
+
+        <div class="group">
+          <h2>階調の表し方</h2>
+          <div class="dither-grid" id="ditherGrid"></div>
+          <div class="method-params">
+            <div class="row" data-param="threshold"><label for="dTh">しきい値</label><input id="dTh" type="range" min="5" max="95" step="1" data-bind="dither.threshold"><output data-out="dither.threshold"></output></div>
+            <div class="row" data-param="halftone"><label for="dCell">網点の間隔</label><input id="dCell" type="range" min="3" max="24" step="1" data-bind="dither.cell"><output data-out="dither.cell"></output></div>
+            <div class="row" data-param="halftone"><label for="dAng">網点の角度</label><input id="dAng" type="range" min="0" max="90" step="1" data-bind="dither.angle"><output data-out="dither.angle"></output></div>
+          </div>
+        </div>
+
+        <div class="group">
+          <h2>補正 <small><button class="btn" id="resetAdj" style="height:26px;padding:0 10px;font-size:12px">リセット</button></small></h2>
+          <div class="row"><label for="aB">明るさ</label><input id="aB" type="range" min="-50" max="50" step="1" data-bind="adjust.brightness"><output data-out="adjust.brightness"></output></div>
+          <div class="row"><label for="aC">コントラスト</label><input id="aC" type="range" min="-50" max="80" step="1" data-bind="adjust.contrast"><output data-out="adjust.contrast"></output></div>
+          <div class="row"><label for="aG">ガンマ</label><input id="aG" type="range" min="0.4" max="2.5" step="0.05" data-bind="adjust.gamma"><output data-out="adjust.gamma"></output></div>
+          <div class="row"><label for="aS">シャープ</label><input id="aS" type="range" min="0" max="100" step="1" data-bind="adjust.sharpen"><output data-out="adjust.sharpen"></output></div>
+          <label class="check"><input type="checkbox" data-bind="adjust.invert">白黒を反転する</label>
+          <p class="hint">感熱紙は点が少し太って暗めに出ます。写真はガンマを 1.3 前後に上げると近づきます。</p>
+        </div>
+
+        <div class="group">
+          <h2>印字範囲 <small>単位はドット</small></h2>
+          <div class="row"><label for="xPW">印字幅</label><input id="xPW" type="range" min="384" max="624" step="4" data-bind="printer.printWidth"><output data-out="printer.printWidth"></output></div>
+          <div class="row"><label for="xOff">左の余白</label><input id="xOff" type="range" min="0" max="96" step="2" data-bind="printer.offset"><output data-out="printer.offset"></output></div>
+          <div class="inline-actions"><button class="btn" id="calibBtn">調整用チャートを出す</button></div>
+          <p class="hint">チャートを印刷して、紙に残っている右端の数字を印字幅に合わせます。左側が欠けるときは左の余白を増やしてください。プレビューの斜線部分は印字されません。</p>
+        </div>
+
+        <div class="group">
+          <details class="adv">
+            <summary>詳細設定</summary>
+            <div class="inner">
+              <div class="row two"><label for="xW">1行のバイト数</label><input id="xW" type="number" min="8" max="128" step="1" data-bind="printer.widthBytes"></div>
+              <div class="row two"><label for="xC">送信単位</label><input id="xC" type="number" min="20" max="512" step="1" data-bind="printer.chunk"></div>
+              <div class="row two"><label for="xI">送信間隔 ms</label><input id="xI" type="number" min="0" max="200" step="1" data-bind="printer.interval"></div>
+              <label class="check"><input type="checkbox" data-bind="printer.split">255行ごとに区切って送る</label>
+              <p class="hint">M02 Pro は 1行 78 バイトで送り、そのうち印字されるのは 576 ドットです。印刷が途切れるときは送信間隔を 30〜40 にするか、区切って送るをオンにしてください。</p>
+              <div class="inline-actions"><button class="btn" id="themeBtn">表示テーマを切り替え</button></div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="dock" id="dock">
+        <div class="row"><label for="pD">印刷の濃さ</label><input id="pD" type="range" min="1" max="8" step="1" data-bind="printer.density"><output data-out="printer.density"></output></div>
+        <div class="row"><label for="xFeed">最後の余白</label><input id="xFeed" type="range" min="0" max="40" step="1" data-bind="printer.feedMm"><output data-out="printer.feedMm"></output></div>
+        <button class="print-btn" id="printBtn"><span id="printLabel">接続して印刷</span><small id="printMeta"></small></button>
+        <div class="progress"><i id="bar"></i></div>
+        <p class="msg" id="msg" role="status"></p>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<input type="file" id="file" accept="image/*" class="sr" tabindex="-1">
+<div class="drop-hint">ドロップして読み込む</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ───────── constants ───────── */
+const DPI = 300;
+const MM = DPI / 25.4;               // dots per mm
+const MAX_MM = 400;
+const BLE = {
+  services: [0xff00, 0xffe0, 0xae30],
+  write: 0xff02,
+  notify: 0xff03,
+};
+const HEAT = [40, 60, 80, 100, 120, 140, 160, 200];
+
+const FONTS = {
+  zenB:  { family: '"Zen Kaku Gothic New"', weight: 700 },
+  zenR:  { family: '"Zen Kaku Gothic New"', weight: 400 },
+  serif: { family: '"Noto Serif JP"',       weight: 600 },
+  dela:  { family: '"Dela Gothic One"',     weight: 400 },
+  dot:   { family: '"DotGothic16"',         weight: 400 },
+};
+
+const METHODS = [
+  { id: 'atkinson',  label: 'アトキンソン' },
+  { id: 'fs',        label: '誤差拡散' },
+  { id: 'bayer',     label: '規則ディザ' },
+  { id: 'halftone',  label: '網点' },
+  { id: 'noise',     label: 'ノイズ' },
+  { id: 'threshold', label: 'しきい値' },
+];
+
+const DEFAULTS = {
+  source: 'text',
+  text: { value: '感熱紙に、\nそのまま出力。', font: 'zenB', size: 7.5, lineHeight: 1.3, pad: 3, align: 'left' },
+  image: { rotate: 0, fit: 'auto', lengthMm: 80 },
+  pattern: { kind: 'chart', scale: 40, lengthMm: 60, seed: 7 },
+  adjust: { brightness: 0, contrast: 0, gamma: 1, sharpen: 0, invert: false },
+  dither: { method: 'atkinson', threshold: 50, cell: 6, angle: 45 },
+  printer: { density: 5, feedMm: 18, widthBytes: 78, chunk: 128, interval: 20, split: false, printWidth: 576, offset: 0 },
+  zoom: 'std',
+  theme: null,
+};
+
+/* ───────── storage ───────── */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('m02studio:' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('m02studio:' + k, JSON.stringify(v)); } catch (e) {} },
+};
+function merge(base, over) {
+  const out = Array.isArray(base) ? base.slice() : { ...base };
+  if (!over || typeof over !== 'object') return out;
+  for (const k of Object.keys(base)) {
+    if (!(k in over)) continue;
+    const b = base[k], o = over[k];
+    out[k] = (b && typeof b === 'object' && !Array.isArray(b)) ? merge(b, o) : (typeof o === typeof b || b === null ? o : b);
+  }
+  return out;
+}
+const S = merge(DEFAULTS, store.get('state', {}));
+// v2: measured printable width on a real M02 Pro is 576 dots
+if (store.get('ver', 1) < 2) { if (S.printer.printWidth === 624) S.printer.printWidth = 576; store.set('ver', 2); }
+if (store.get('ver', 1) < 3) { if (S.printer.feedMm === 4) S.printer.feedMm = 12; store.set('ver', 3); }
+if (store.get('ver', 1) < 4) { if (S.printer.feedMm === 12) S.printer.feedMm = 18; store.set('ver', 4); }
+let saveT = 0;
+function save() { clearTimeout(saveT); saveT = setTimeout(() => store.set('state', S), 300); }
+
+const getPath = (o, p) => p.split('.').reduce((a, k) => a?.[k], o);
+const setPath = (o, p, v) => { const ks = p.split('.'); const last = ks.pop(); ks.reduce((a, k) => a[k], o)[last] = v; };
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+if (S.theme) document.documentElement.dataset.theme = S.theme;
+
+/* ───────── rng / noise ───────── */
+function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function hash2(x, y, s) { let h = Math.imul(x, 374761393) + Math.imul(y, 668265263) + Math.imul(s, 2147483647); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
+function valueNoise(x, y, s) {
+  const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
+  const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+  const a = hash2(xi, yi, s), b = hash2(xi + 1, yi, s), c = hash2(xi, yi + 1, s), d = hash2(xi + 1, yi + 1, s);
+  return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+}
+function fbm(x, y, s, oct = 5) {
+  let sum = 0, amp = 0.5, f = 1, norm = 0;
+  for (let i = 0; i < oct; i++) { sum += amp * valueNoise(x * f, y * f, s + i * 31); norm += amp; amp *= 0.5; f *= 2.03; }
+  return sum / norm;
+}
+
+/* ───────── sources → grey (0 = black, 1 = white) ───────── */
+const work = document.createElement('canvas');
+const wctx = work.getContext('2d', { willReadFrequently: true });
+
+function canvasToGrey(W, H) {
+  const d = wctx.getImageData(0, 0, W, H).data;
+  const g = new Float32Array(W * H);
+  for (let i = 0, j = 0; i < g.length; i++, j += 4) {
+    const a = d[j + 3] / 255;
+    const lum = (0.2126 * d[j] + 0.7152 * d[j + 1] + 0.0722 * d[j + 2]) / 255;
+    g[i] = lum * a + (1 - a);
+  }
+  return g;
+}
+function prepCanvas(W, H) {
+  work.width = W; work.height = H;
+  wctx.setTransform(1, 0, 0, 1, 0, 0);
+  wctx.fillStyle = '#fff'; wctx.fillRect(0, 0, W, H);
+  wctx.imageSmoothingEnabled = true; wctx.imageSmoothingQuality = 'high';
+}
+
+const KINSOKU = '、。，．,.・：；:;！？!?）」』】〉》〕｝ーぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ々';
+async function srcText(W) {
+  const t = S.text, f = FONTS[t.font] || FONTS.zenB;
+  const px = Math.max(4, Math.round(t.size * MM));
+  const font = `${f.weight} ${px}px ${f.family}`;
+  try { await document.fonts.load(font, t.value || 'あ'); } catch (e) {}
+  wctx.font = font;
+  const pad = Math.round(t.pad * MM);
+  const maxW = Math.max(px, W - pad * 2);
+  const lines = [];
+  for (const para of (t.value || '').split('\n')) {
+    let line = '';
+    for (const ch of [...para]) {
+      const test = line + ch;
+      if (line && wctx.measureText(test).width > maxW) {
+        if (KINSOKU.includes(ch)) { lines.push(test); line = ''; }
+        else { lines.push(line); line = ch; }
+      } else line = test;
+    }
+    lines.push(line);
+  }
+  const m = wctx.measureText('永');
+  const asc = m.fontBoundingBoxAscent || px * 0.88;
+  const desc = m.fontBoundingBoxDescent || px * 0.14;
+  const lh = px * t.lineHeight;
+  const H = clamp(Math.ceil(pad * 2 + asc + desc + lh * (lines.length - 1)), 8, Math.round(MAX_MM * MM));
+  prepCanvas(W, H);
+  wctx.font = font; wctx.fillStyle = '#000'; wctx.textBaseline = 'alphabetic';
+  wctx.textAlign = t.align;
+  const x = t.align === 'center' ? W / 2 : t.align === 'right' ? W - pad : pad;
+  lines.forEach((l, i) => wctx.fillText(l, x, pad + asc + i * lh));
+  return { grey: canvasToGrey(W, H), W, H };
+}
+
+let IMG = null, IMG_NAME = '';
+function srcImage(W) {
+  if (!IMG) return null;
+  const iw = IMG.naturalWidth || IMG.width, ih = IMG.naturalHeight || IMG.height;
+  const rot = ((S.image.rotate % 360) + 360) % 360;
+  const sw = rot % 180 ? ih : iw, sh = rot % 180 ? iw : ih;
+  const Hmax = Math.round(MAX_MM * MM);
+  let H = S.image.fit === 'fixed' ? Math.round(S.image.lengthMm * MM) : Math.round(sh * W / sw);
+  H = clamp(H, 8, Hmax);
+  const s = S.image.fit === 'fixed' ? Math.min(W / sw, H / sh) : W / sw;
+  prepCanvas(W, H);
+  wctx.translate(W / 2, H / 2);
+  wctx.rotate(rot * Math.PI / 180);
+  wctx.drawImage(IMG, -iw * s / 2, -ih * s / 2, iw * s, ih * s);
+  wctx.setTransform(1, 0, 0, 1, 0, 0);
+  return { grey: canvasToGrey(W, H), W, H };
+}
+
+function srcPattern(W) {
+  const p = S.pattern;
+  const H = clamp(Math.round(p.lengthMm * MM), 8, Math.round(MAX_MM * MM));
+  const g = new Float32Array(W * H);
+  const sc = p.scale * 4 + 20;
+  const seed = p.seed | 0;
+  if (p.kind === 'calib') {
+    const Hc = Math.round(24 * MM);
+    prepCanvas(W, Hc);
+    wctx.fillStyle = '#000';
+    const bar = Math.round(2.5 * MM);
+    wctx.fillRect(0, 0, W, bar);                              // full-width bar: shows the real edges
+    const top = bar + Math.round(1.5 * MM);
+    for (let x = 0; x < W; x += 8) {
+      const major = x % 48 === 0;
+      wctx.fillRect(x, top, 2, Math.round((major ? 5 : 2.5) * MM));
+    }
+    wctx.fillRect(W - 2, top, 2, Math.round(5 * MM));
+    const fs = Math.round(2.6 * MM);
+    wctx.font = `700 ${fs}px "Zen Kaku Gothic New", sans-serif`;
+    wctx.textAlign = 'center'; wctx.textBaseline = 'top';
+    for (let i = 0, x = 0; x <= W; i++, x += 48) {
+      const row = i % 2;
+      wctx.textAlign = x === 0 ? 'left' : x + fs * 1.6 > W ? 'right' : 'center';
+      const tx = x + 1;
+      wctx.fillText(String(x), tx, top + Math.round(6 * MM) + row * Math.round(3.6 * MM));
+    }
+    wctx.textAlign = 'left';
+    wctx.font = `500 ${Math.round(2.4 * MM)}px "Zen Kaku Gothic New", sans-serif`;
+    wctx.fillText('右端に残った数字が印字幅', Math.round(1 * MM), Math.round(17.5 * MM));
+    return { grey: canvasToGrey(W, Hc), W, H: Hc };
+  }
+  if (p.kind === 'chart') {
+    const gap = Math.round(2 * MM);
+    const b1 = Math.round(H * 0.22), b2 = Math.round(H * 0.40);
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      let v = 1;
+      const u = x / (W - 1);
+      if (y < b1) v = u;
+      else if (y >= b1 + gap && y < b2) v = Math.round(u * 10) / 10;
+      else if (y >= b2 + gap) {
+        const cx = W / 2, cy = (b2 + gap + H) / 2, r = Math.min(W, H - b2 - gap) * 0.46;
+        const dx = x - cx, dy = y - cy, d = Math.hypot(dx, dy);
+        if (d < r) {
+          const ang = Math.atan2(dy, dx);
+          v = d < r * 0.5 ? (Math.sin(ang * 36) > 0 ? 0 : 1) : d / r;
+        }
+      }
+      g[y * W + x] = v;
+    }
+  } else if (p.kind === 'flow') {
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const n = fbm(x / sc, y / sc, seed);
+      g[y * W + x] = 0.5 + 0.5 * Math.cos(n * Math.PI * 2 * 7);
+    }
+  } else if (p.kind === 'moire') {
+    const r = mulberry(seed);
+    const c1x = W * (0.2 + r() * 0.3), c1y = H * (0.2 + r() * 0.3), c2x = W * (0.5 + r() * 0.3), c2y = H * (0.5 + r() * 0.3);
+    const f = Math.PI * 2 / (p.scale * 0.25 + 3);
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const d1 = Math.hypot(x - c1x, y - c1y), d2 = Math.hypot(x - c2x, y - c2y);
+      g[y * W + x] = 0.5 + 0.25 * (Math.sin(d1 * f) + Math.sin(d2 * f));
+    }
+  } else {
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const wx = fbm(x / sc + 3.1, y / sc, seed + 99, 3), wy = fbm(x / sc, y / sc + 7.7, seed + 51, 3);
+      const n = fbm(x / sc + wx * 1.6, y / sc + wy * 1.6, seed);
+      g[y * W + x] = clamp((n - 0.25) * 2, 0, 1);
+    }
+  }
+  return { grey: g, W, H };
+}
+
+function geom() {
+  const full = S.printer.widthBytes * 8;
+  const calib = S.source === 'pattern' && S.pattern.kind === 'calib';
+  const cw = calib ? full : clamp(S.printer.printWidth | 0, 64, full);
+  const x0 = calib ? 0 : clamp(S.printer.offset | 0, 0, full - cw);
+  return { full, cw, x0, calib };
+}
+async function renderSource() {
+  const W = geom().cw;
+  if (S.source === 'text') return srcText(W);
+  if (S.source === 'image') return srcImage(W);
+  return srcPattern(W);
+}
+
+/* ───────── adjust ───────── */
+function boxBlur3(src, W, H) {
+  const out = new Float32Array(src.length);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    let s = 0, n = 0;
+    for (let j = -1; j <= 1; j++) { const yy = y + j; if (yy < 0 || yy >= H) continue;
+      for (let i = -1; i <= 1; i++) { const xx = x + i; if (xx < 0 || xx >= W) continue; s += src[yy * W + xx]; n++; } }
+    out[y * W + x] = s / n;
+  }
+  return out;
+}
+function applyAdjust(src, W, H) {
+  const a = S.adjust;
+  const out = new Float32Array(src.length);
+  const b = a.brightness / 100;
+  const k = a.contrast / 100;
+  const c = k >= 0 ? 1 / (1 - k * 0.95) : 1 + k;
+  const gi = 1 / a.gamma;
+  const sh = a.sharpen / 100 * 2.2;
+  const blur = sh > 0 ? boxBlur3(src, W, H) : null;
+  for (let i = 0; i < src.length; i++) {
+    let v = src[i];
+    if (blur) v = v + (v - blur[i]) * sh;
+    v = (v - 0.5) * c + 0.5 + b;
+    v = v <= 0 ? 0 : v >= 1 ? 1 : Math.pow(v, gi);
+    if (a.invert) v = 1 - v;
+    out[i] = v;
+  }
+  return out;
+}
+
+/* ───────── dithering → Uint8Array (1 = black dot) ───────── */
+const KERNELS = {
+  fs: { div: 16, k: [[1, 0, 7], [-1, 1, 3], [0, 1, 5], [1, 1, 1]], serp: true },
+  atkinson: { div: 8, k: [[1, 0, 1], [2, 0, 1], [-1, 1, 1], [0, 1, 1], [1, 1, 1], [0, 2, 1]], serp: false },
+};
+function diffuse(g, W, H, spec) {
+  const e = Float32Array.from(g), out = new Uint8Array(W * H);
+  for (let y = 0; y < H; y++) {
+    const rtl = spec.serp && (y & 1);
+    for (let xi = 0; xi < W; xi++) {
+      const x = rtl ? W - 1 - xi : xi, i = y * W + x;
+      const old = e[i], nw = old < 0.5 ? 0 : 1;
+      out[i] = nw ? 0 : 1;
+      const err = (old - nw) / spec.div;
+      for (const [dx, dy, w] of spec.k) {
+        const xx = x + (rtl ? -dx : dx), yy = y + dy;
+        if (xx >= 0 && xx < W && yy < H) e[yy * W + xx] += err * w;
+      }
+    }
+  }
+  return out;
+}
+const BAYER8 = (() => {
+  let m = [[0]];
+  for (let n = 1; n < 8; n *= 2) {
+    const s = n * 2, nm = Array.from({ length: s }, () => new Array(s));
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      const v = m[y][x] * 4;
+      nm[y][x] = v; nm[y][x + n] = v + 2; nm[y + n][x] = v + 3; nm[y + n][x + n] = v + 1;
+    }
+    m = nm;
+  }
+  return m;
+})();
+function integral(g, W, H) {
+  const I = new Float64Array((W + 1) * (H + 1));
+  for (let y = 1; y <= H; y++) { let row = 0;
+    for (let x = 1; x <= W; x++) { row += g[(y - 1) * W + x - 1]; I[y * (W + 1) + x] = I[(y - 1) * (W + 1) + x] + row; } }
+  return I;
+}
+function boxAvg(I, W, H, cx, cy, r) {
+  const x0 = clamp(Math.round(cx - r), 0, W), x1 = clamp(Math.round(cx + r), 0, W);
+  const y0 = clamp(Math.round(cy - r), 0, H), y1 = clamp(Math.round(cy + r), 0, H);
+  const n = (x1 - x0) * (y1 - y0);
+  if (n <= 0) return 1;
+  const s = I[y1 * (W + 1) + x1] - I[y0 * (W + 1) + x1] - I[y1 * (W + 1) + x0] + I[y0 * (W + 1) + x0];
+  return s / n;
+}
+function halftone(g, W, H, cell, angleDeg) {
+  const out = new Uint8Array(W * H);
+  const I = integral(g, W, H);
+  const a = angleDeg * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const u = x * ca + y * sa, v = -x * sa + y * ca;
+    const cu = (Math.floor(u / cell) + 0.5) * cell, cv = (Math.floor(v / cell) + 0.5) * cell;
+    const cx = cu * ca - cv * sa, cy = cu * sa + cv * ca;
+    const dark = 1 - boxAvg(I, W, H, cx, cy, cell * 0.5);
+    // dot radius from coverage; dots merge into inverted holes beyond 50%
+    const du = u - cu, dv = v - cv;
+    let on;
+    if (dark <= 0.5) { const r = cell * Math.sqrt(dark / Math.PI); on = du * du + dv * dv < r * r; }
+    else {
+      const hr = cell * Math.sqrt((1 - dark) / Math.PI);
+      const eu = du - Math.sign(du || 1) * cell / 2, ev = dv - Math.sign(dv || 1) * cell / 2;
+      on = !(eu * eu + ev * ev < hr * hr);
+    }
+    out[y * W + x] = on ? 1 : 0;
+  }
+  return out;
+}
+function dither(g, W, H, d = S.dither) {
+  switch (d.method) {
+    case 'threshold': { const t = d.threshold / 100, o = new Uint8Array(W * H); for (let i = 0; i < o.length; i++) o[i] = g[i] < t ? 1 : 0; return o; }
+    case 'bayer': { const o = new Uint8Array(W * H); for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) o[y * W + x] = g[y * W + x] < (BAYER8[y & 7][x & 7] + 0.5) / 64 ? 1 : 0; return o; }
+    case 'noise': { const o = new Uint8Array(W * H); for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) o[y * W + x] = g[y * W + x] < hash2(x, y, 1234) ? 1 : 0; return o; }
+    case 'halftone': return halftone(g, W, H, d.cell, d.angle);
+    case 'fs': return diffuse(g, W, H, KERNELS.fs);
+    default: return diffuse(g, W, H, KERNELS.atkinson);
+  }
+}
+
+/* ───────── pipeline ───────── */
+const out = $('#out'), octx = out.getContext('2d');
+let src = null, adjusted = null, bits = null, frame = null;
+let needSrc = true, scheduled = false, running = false, again = false;
+let showGrey = false;
+
+function schedule(source) {
+  if (source) needSrc = true;
+  if (running) { again = true; return; }
+  if (!scheduled) { scheduled = true; requestAnimationFrame(run); }
+}
+async function run() {
+  scheduled = false; running = true;
+  try {
+    if (needSrc) { needSrc = false; src = await renderSource(); }
+    if (src) {
+      adjusted = applyAdjust(src.grey, src.W, src.H);
+      bits = dither(adjusted, src.W, src.H);
+      frame = compose(src.W, src.H);
+    } else { adjusted = bits = frame = null; }
+    draw();
+  } catch (e) { console.error(e); setMsg('プレビューを作れませんでした：' + e.message, 'error'); }
+  running = false;
+  if (again) { again = false; schedule(); }
+}
+
+function compose(w, H) {
+  const g = geom();
+  const full = g.full, x0 = (w === full) ? 0 : g.x0;
+  if (w === full) return { W: full, H, bits, grey: adjusted, x0: 0, cw: full, calib: g.calib };
+  const fb = new Uint8Array(full * H), fg = new Float32Array(full * H).fill(1);
+  for (let y = 0; y < H; y++) {
+    fb.set(bits.subarray(y * w, y * w + w), y * full + x0);
+    fg.set(adjusted.subarray(y * w, y * w + w), y * full + x0);
+  }
+  return { W: full, H, bits: fb, grey: fg, x0, cw: w, calib: g.calib };
+}
+function draw() {
+  const W = S.printer.widthBytes * 8;
+  const empty = !src;
+  $('#empty').hidden = !empty;
+  if (empty) {
+    out.width = W; out.height = Math.round(60 * MM);
+    octx.fillStyle = '#fff'; octx.fillRect(0, 0, out.width, out.height);
+  } else {
+    const { W: w, H, x0, cw } = frame;
+    out.width = w; out.height = H;
+    const img = octx.createImageData(w, H), d = img.data;
+    for (let y = 0, i = 0, j = 0; y < H; y++) for (let x = 0; x < w; x++, i++, j += 4) {
+      const inside = x >= x0 && x < x0 + cw;
+      if (showGrey) { const v = frame.grey[i] * 255; d[j] = d[j + 1] = d[j + 2] = v; }
+      else if (frame.bits[i]) { d[j] = 34; d[j + 1] = 34; d[j + 2] = 38; }
+      else if (!inside && ((x + y) % 14 < 2)) { d[j] = 222; d[j + 1] = 226; d[j + 2] = 232; } // non-printing margin hatch
+      else { d[j] = d[j + 1] = d[j + 2] = 255; }
+      d[j + 3] = 255;
+    }
+    octx.putImageData(img, 0, 0);
+  }
+  layoutPaper();
+  updateMeta();
+}
+
+function paperWidth() {
+  const W = S.printer.widthBytes * 8;
+  if (S.zoom === 'small') return 220;
+  if (S.zoom === 'dot') return W / (window.devicePixelRatio || 1);
+  const avail = $('#stage').clientWidth - 140;
+  return clamp(Math.min(380, avail), 200, 380);
+}
+function layoutPaper() {
+  const W = S.printer.widthBytes * 8;
+  const pw = Math.round(paperWidth());
+  $('#feeder').style.setProperty('--pw', pw + 'px');
+  $('#feeder').classList.toggle('zoom-1', S.zoom === 'dot');
+  // ruler
+  const H = out.height;
+  const pxPerMm = pw / W * MM;
+  const hPx = H * pw / W;
+  const ruler = $('#ruler'), ticks = $('#ticks');
+  ruler.style.height = hPx + 'px';
+  const minor = pxPerMm >= 4 ? 1 : 5;
+  ticks.style.background =
+    `repeating-linear-gradient(to bottom, color-mix(in srgb, var(--text) 45%, transparent) 0 1px, transparent 1px ${pxPerMm * 10}px) right/8px 100% no-repeat,` +
+    `repeating-linear-gradient(to bottom, color-mix(in srgb, var(--text) 25%, transparent) 0 1px, transparent 1px ${pxPerMm * minor}px) right/4px 100% no-repeat`;
+  ruler.querySelectorAll('span').forEach(s => s.remove());
+  const step = pxPerMm * 10 < 26 ? 20 : 10;
+  for (let mm = step; mm * pxPerMm < hPx - 4; mm += step) {
+    const s = document.createElement('span'); s.textContent = mm; s.style.top = (mm * pxPerMm) + 'px'; ruler.appendChild(s);
+  }
+}
+
+function estimateSeconds(H) {
+  const p = S.printer;
+  const bytes = p.widthBytes * (H + Math.round(p.feedMm * MM));
+  const chunks = Math.ceil(bytes / p.chunk);
+  return Math.max(1, Math.round((chunks * (p.interval + 6) + 1400) / 1000));
+}
+function updateMeta() {
+  const W = frame ? frame.cw : S.printer.widthBytes * 8;
+  const H = src ? src.H : 0;
+  $('#dims').innerHTML = src
+    ? `<b>${(W / MM).toFixed(1)} × ${(H / MM).toFixed(1)} mm</b>　${W} × ${H} ドット${frame && frame.calib ? '（調整用チャート）' : ''}`
+    : '印刷する画像がありません';
+  $('#printMeta').textContent = src ? `約 ${estimateSeconds(H)} 秒` : '';
+  refreshPrintBtn();
+}
+
+/* ───────── dither swatches ───────── */
+function buildSwatches() {
+  const grid = $('#ditherGrid');
+  const w = 90, h = 36;
+  const g = new Float32Array(w * h);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const u = x / (w - 1), wave = 0.08 * Math.sin(y / h * Math.PI * 2 + u * 6);
+    g[y * w + x] = clamp(u + wave, 0, 1);
+  }
+  for (const m of METHODS) {
+    const b = document.createElement('button');
+    b.className = 'dither-opt'; b.dataset.method = m.id;
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const ctx = c.getContext('2d'), img = ctx.createImageData(w, h);
+    const bits = dither(g, w, h, { method: m.id, threshold: 50, cell: 5, angle: 45 });
+    for (let i = 0, j = 0; i < bits.length; i++, j += 4) { const v = bits[i] ? 34 : 255; img.data[j] = img.data[j + 1] = img.data[j + 2] = v; img.data[j + 3] = 255; }
+    ctx.putImageData(img, 0, 0);
+    const s = document.createElement('span'); s.textContent = m.label;
+    b.append(c, s);
+    b.addEventListener('click', () => { S.dither.method = m.id; syncUI(); schedule(); save(); });
+    grid.appendChild(b);
+  }
+}
+
+/* ───────── UI binding ───────── */
+const FMT = {
+  'text.size': v => v + ' mm', 'text.lineHeight': v => (+v).toFixed(2), 'text.pad': v => v + ' mm',
+  'image.lengthMm': v => v + ' mm', 'pattern.lengthMm': v => v + ' mm', 'pattern.scale': v => v,
+  'adjust.brightness': v => (v > 0 ? '+' : '') + v, 'adjust.contrast': v => (v > 0 ? '+' : '') + v,
+  'adjust.gamma': v => (+v).toFixed(2), 'adjust.sharpen': v => v,
+  'dither.threshold': v => v + '%', 'dither.cell': v => v + ' ドット', 'dither.angle': v => v + '°',
+  'printer.density': v => v + ' / 8', 'printer.printWidth': v => v, 'printer.offset': v => v, 'printer.feedMm': v => v + ' mm',
+};
+function sectionOf(path) { return path.split('.')[0]; }
+function onChange(path) {
+  const sec = sectionOf(path);
+  if (sec === 'text' || sec === 'image' || sec === 'pattern' || sec === 'source' || path === 'printer.widthBytes' || path === 'printer.printWidth' || path === 'printer.offset') schedule(true);
+  else if (sec === 'adjust' || sec === 'dither') schedule();
+  else if (sec === 'zoom') layoutPaper();
+  else updateMeta();
+  save();
+}
+function bindInputs() {
+  $$('[data-bind]').forEach(el => {
+    const path = el.dataset.bind;
+    el.addEventListener('input', () => {
+      let v;
+      if (el.type === 'checkbox') v = el.checked;
+      else if (el.type === 'range' || el.type === 'number') { v = +el.value; if (Number.isNaN(v)) return;
+        if (el.type === 'number') v = clamp(Math.round(v), +el.min || 0, +el.max || 9999); }
+      else v = el.value;
+      setPath(S, path, v);
+      syncOutputs(); syncVisibility();
+      onChange(path);
+    });
+  });
+  $$('[data-seg]').forEach(seg => {
+    const path = seg.dataset.seg;
+    seg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+      setPath(S, path, b.dataset.value); syncUI(); onChange(path);
+      if (path === 'source' && b.dataset.value === 'image' && !IMG) $('#file').click();
+    }));
+  });
+}
+function syncOutputs() {
+  $$('[data-out]').forEach(o => { const p = o.dataset.out, v = getPath(S, p); o.textContent = FMT[p] ? FMT[p](v) : v; });
+}
+function syncVisibility() {
+  $$('[data-pane]').forEach(p => p.hidden = p.dataset.pane !== S.source);
+  $$('[data-param]').forEach(p => p.hidden = p.dataset.param !== S.dither.method);
+  const test = expr => { const [p, v] = expr.split('='); return String(getPath(S, p)) === v; };
+  $$('[data-show]').forEach(p => p.hidden = !test(p.dataset.show));
+  $$('[data-show-not]').forEach(p => p.hidden = test(p.dataset.showNot));
+  $$('[data-hide]').forEach(p => { const [path, vals] = p.dataset.hide.split('='); p.hidden = vals.split(',').includes(String(getPath(S, path))); });
+  const full = S.printer.widthBytes * 8, pw = $('#xPW'), off = $('#xOff');
+  pw.max = full; off.max = Math.max(0, full - S.printer.printWidth);
+}
+function syncUI() {
+  $$('[data-bind]').forEach(el => { const v = getPath(S, el.dataset.bind); if (el.type === 'checkbox') el.checked = !!v; else el.value = v; });
+  $$('[data-seg]').forEach(seg => { const v = getPath(S, seg.dataset.seg); seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.value === v))); });
+  $$('.dither-opt').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.method === S.dither.method)));
+  syncOutputs(); syncVisibility();
+}
+
+/* ───────── image input ───────── */
+function loadImageFile(file) {
+  if (!file || !file.type.startsWith('image/')) { toast('画像ファイルを選んでください'); return; }
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = () => {
+    IMG = img; IMG_NAME = file.name || '貼り付けた画像';
+    $('#imgName').textContent = `${IMG_NAME}（${img.naturalWidth} × ${img.naturalHeight}）`;
+    S.source = 'image'; syncUI(); schedule(true); save();
+  };
+  img.onerror = () => toast('この画像は読み込めませんでした');
+  img.src = url;
+}
+$('#file').addEventListener('change', e => { loadImageFile(e.target.files[0]); e.target.value = ''; });
+$('#pickBtn').addEventListener('click', () => $('#file').click());
+$('#empty').addEventListener('click', () => $('#file').click());
+$('#rotBtn').addEventListener('click', () => { S.image.rotate = (S.image.rotate + 90) % 360; schedule(true); save(); });
+$('#calibBtn').addEventListener('click', () => { S.source = 'pattern'; S.pattern.kind = 'calib'; syncUI(); schedule(true); save(); });
+$('#seedBtn').addEventListener('click', () => { S.pattern.seed = (Math.random() * 1e6) | 0; schedule(true); save(); });
+$('#resetAdj').addEventListener('click', () => { S.adjust = { ...DEFAULTS.adjust }; syncUI(); schedule(); save(); });
+$('#themeBtn').addEventListener('click', () => {
+  const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+  const cur = S.theme || (dark ? 'dark' : 'light');
+  S.theme = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = S.theme; save();
+});
+window.addEventListener('paste', e => {
+  if (e.target.closest && e.target.closest('textarea,input')) return;
+  const item = [...(e.clipboardData?.items || [])].find(i => i.type.startsWith('image/'));
+  if (item) { e.preventDefault(); loadImageFile(item.getAsFile()); }
+});
+let dragDepth = 0;
+window.addEventListener('dragenter', e => { if (e.dataTransfer?.types?.includes('Files')) { dragDepth++; document.body.classList.add('dragging'); } });
+window.addEventListener('dragleave', () => { dragDepth = Math.max(0, dragDepth - 1); if (!dragDepth) document.body.classList.remove('dragging'); });
+window.addEventListener('dragover', e => e.preventDefault());
+window.addEventListener('drop', e => { e.preventDefault(); dragDepth = 0; document.body.classList.remove('dragging'); loadImageFile(e.dataTransfer?.files?.[0]); });
+
+/* view toggles */
+const viewBtn = $('#viewBtn');
+viewBtn.addEventListener('click', () => { showGrey = !showGrey; viewBtn.setAttribute('aria-pressed', String(showGrey)); draw(); });
+let downloads = null;
+if (window.claude && typeof window.claude.use === 'function') {
+  window.claude.use('downloads').then(d => { downloads = d; }).catch(() => {});
+}
+$('#saveBtn').addEventListener('click', () => {
+  if (!src) return toast('保存する画像がありません');
+  const filename = `m02pro-${S.source}-${Date.now()}.png`;
+  out.toBlob(async b => {
+    if (downloads) {
+      try { await downloads.save({ filename, data: b }); toast('PNGを保存しました'); }
+      catch (e) { if (e && e.code !== 'declined') toast('この表示では保存できません'); }
+      return;
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(b);
+    a.download = filename;
+    a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }, 'image/png');
+});
+window.addEventListener('resize', () => { if (S.zoom === 'std') layoutPaper(); });
+
+/* ───────── messages ───────── */
+function setMsg(t, kind = '') { const m = $('#msg'); m.textContent = t; m.dataset.kind = kind; }
+let toastT = 0;
+function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 2400); }
+
+/* ───────── Bluetooth printer ───────── */
+const P = {
+  device: null, ch: null, noResp: true, busy: false, abort: false, battery: null,
+  get connected() { return !!(this.device && this.device.gatt && this.device.gatt.connected && this.ch); },
+
+  async connect() {
+    if (!('bluetooth' in navigator)) throw new Error('このブラウザは Bluetooth 接続に対応していません。Mac の Chrome か Edge で開いてください。');
+    if (!window.isSecureContext) throw new Error('https か localhost で開いたときだけ Bluetooth を使えます。');
+    setConn('busy', '接続しています');
+    let device;
+    try {
+      device = await navigator.bluetooth.requestDevice({
+        filters: [{ namePrefix: 'M02' }, { namePrefix: 'Mr.in' }, { services: [0xff00] }],
+        optionalServices: BLE.services,
+      });
+    } catch (e) {
+      setConn();
+      if (e.name === 'NotFoundError') return false; // user cancelled picker
+      if (e.name === 'SecurityError' || e.name === 'NotAllowedError') throw new Error('この表示では Bluetooth が使えません。HTML ファイルを Chrome で直接開いてください（localhost か https）。');
+      throw e;
+    }
+    device.addEventListener('gattserverdisconnected', () => { this.ch = null; setConn(); refreshPrintBtn(); if (!this.busy) toast('プリンターとの接続が切れました'); });
+    const server = await device.gatt.connect();
+    await sleep(120);
+    let service = null;
+    for (const u of BLE.services) { try { service = await server.getPrimaryService(u); break; } catch (e) {} }
+    if (!service) throw new Error('印刷用のサービスが見つかりませんでした。プリンターの電源を入れ直してください。');
+    let ch;
+    try { ch = await service.getCharacteristic(BLE.write); }
+    catch (e) { ch = (await service.getCharacteristics()).find(c => c.properties.writeWithoutResponse || c.properties.write); }
+    if (!ch) throw new Error('書き込み先が見つかりませんでした。');
+    this.noResp = !!ch.properties.writeWithoutResponse;
+    try {
+      const n = await service.getCharacteristic(BLE.notify);
+      await n.startNotifications();
+      n.addEventListener('characteristicvaluechanged', ev => this.onNotify(new Uint8Array(ev.target.value.buffer)));
+    } catch (e) {}
+    this.device = device; this.ch = ch;
+    setConn('on', device.name || 'M02 Pro');
+    return true;
+  },
+  onNotify(b) {
+    // 0x1a 0x04 nn = battery level (reported by the printer, unverified on every firmware)
+    for (let i = 0; i + 2 < b.length; i++) if (b[i] === 0x1a && b[i + 1] === 0x04 && b[i + 2] <= 100) { this.battery = b[i + 2]; setConn('on', this.device?.name || 'M02 Pro'); }
+  },
+  disconnect() { try { this.device?.gatt?.disconnect(); } catch (e) {} this.ch = null; setConn(); },
+  async send(bytes) {
+    const buf = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+    if (!this.ch) throw new Error('プリンターに接続されていません。');
+    if (this.noResp && this.ch.writeValueWithoutResponse) {
+      try { return await this.ch.writeValueWithoutResponse(buf); } catch (e) { this.noResp = false; }
+    }
+    return this.ch.writeValue(buf);
+  },
+  async sendData(data, onProgress, base, total) {
+    const { chunk, interval } = S.printer;
+    for (let i = 0; i < data.length; i += chunk) {
+      if (this.abort) throw new Error('ABORT');
+      await this.send(data.subarray(i, Math.min(i + chunk, data.length)));
+      if (interval) await sleep(interval);
+      onProgress((base + Math.min(i + chunk, data.length)) / total);
+    }
+  },
+  async print(bitsArr, W, H, onProgress) {
+    const wb = S.printer.widthBytes;
+    // trailing margin is sent as blank raster rows: ESC J is ignored by some firmware
+    const feedRows = Math.round(S.printer.feedMm * MM);
+    const HT = H + feedRows;
+    const bytes = new Uint8Array(wb * HT);
+    for (let y = 0; y < H; y++) {
+      const row = y * wb, src = y * W;
+      for (let x = 0; x < W; x++) if (bitsArr[src + x]) bytes[row + (x >> 3)] |= 0x80 >> (x & 7);
+    }
+    const hdr = (rows) => new Uint8Array([0x1d, 0x76, 0x30, 0x00, wb & 255, wb >> 8, rows & 255, rows >> 8]);
+    this.busy = true; this.abort = false;
+    try {
+      await this.send([0x10, 0xff, 0xfe, 0x01]); await sleep(50);                 // wake / prefix
+      await this.send([0x1b, 0x40]); await sleep(100);                             // ESC @
+      await this.send([0x1b, 0x37, 7, HEAT[S.printer.density - 1], 2]); await sleep(30); // ESC 7 heat
+      if (S.printer.split) {
+        for (let y = 0; y < HT; y += 255) {
+          const rows = Math.min(255, HT - y);
+          await this.send(hdr(rows));
+          await this.sendData(bytes.subarray(y * wb, (y + rows) * wb), onProgress, y * wb, bytes.length);
+        }
+      } else {
+        await this.send(hdr(HT));
+        await this.sendData(bytes, onProgress, 0, bytes.length);
+      }
+      await sleep(300);
+      await sleep(400);
+    } finally { this.busy = false; }
+  },
+};
+
+function setConn(state = '', name = '') {
+  const dot = $('#connDot'), txt = $('#connText'), btn = $('#connBtn');
+  dot.dataset.s = state;
+  if (state === 'on') {
+    txt.innerHTML = `<b></b>${P.battery != null ? `　電池 ${P.battery}%` : ''}`;
+    txt.querySelector('b').textContent = name;
+    btn.textContent = '切断';
+  } else if (state === 'busy') { txt.textContent = name; btn.textContent = '接続'; }
+  else { txt.textContent = '未接続'; btn.textContent = '接続'; }
+  btn.disabled = state === 'busy' || P.busy;
+}
+function refreshPrintBtn() {
+  const btn = $('#printBtn'), label = $('#printLabel');
+  if (P.busy) { label.textContent = '印刷を中止'; btn.classList.add('busy'); btn.disabled = false; return; }
+  btn.classList.remove('busy');
+  label.textContent = P.connected ? '印刷' : '接続して印刷';
+  btn.disabled = !src;
+}
+
+$('#connBtn').addEventListener('click', async () => {
+  if (P.connected) { P.disconnect(); refreshPrintBtn(); return; }
+  try { const ok = await P.connect(); if (ok) { setMsg('接続しました', 'ok'); } }
+  catch (e) { setConn(); setMsg(e.message, 'error'); }
+  refreshPrintBtn();
+});
+
+async function doPrint() {
+  if (P.busy) { P.abort = true; return; }
+  if (!src || !frame) return;
+  if (!P.connected) {
+    try { const ok = await P.connect(); if (!ok) return; }
+    catch (e) { setConn(); setMsg(e.message, 'error'); refreshPrintBtn(); return; }
+  }
+  // wait for any pending render so we print what is shown
+  while (running || scheduled) await sleep(16);
+  const snap = { bits: frame.bits, W: frame.W, H: frame.H };
+  const dock = $('#dock'), feeder = $('#feeder'), paper = $('#paper'), bar = $('#bar');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const paperH = paper.getBoundingClientRect().height;
+  dock.classList.add('printing'); feeder.classList.add('printing');
+  setMsg('送信しています…');
+  if (!reduce) { paper.style.transition = 'none'; paper.style.transform = `translateY(${-paperH}px)`; paper.getBoundingClientRect(); paper.style.transition = 'transform .14s linear'; }
+  let last = 0;
+  const onProgress = p => {
+    const now = performance.now(); if (now - last < 60 && p < 1) return; last = now;
+    bar.style.width = (p * 100).toFixed(1) + '%';
+    if (!reduce) paper.style.transform = `translateY(${-(1 - p) * paperH}px)`;
+  };
+  refreshPrintBtn(); setConn('on', P.device?.name || 'M02 Pro');
+  try {
+    await P.print(snap.bits, snap.W, snap.H, onProgress);
+    onProgress(1);
+    setMsg(`印刷しました（${(snap.H / MM).toFixed(1)} mm）`, 'ok');
+    toast('印刷しました');
+  } catch (e) {
+    if (e.message === 'ABORT') { setMsg('印刷を中止しました。紙が途中で止まっている場合は、プリンターのボタンで送ってください。'); }
+    else setMsg('印刷できませんでした：' + e.message, 'error');
+  } finally {
+    dock.classList.remove('printing'); feeder.classList.remove('printing');
+    paper.style.transition = 'transform .4s cubic-bezier(.2,.8,.2,1)'; paper.style.transform = '';
+    setTimeout(() => { bar.style.width = '0'; }, 600);
+    if (P.connected) setConn('on', P.device?.name || 'M02 Pro'); else setConn();
+    refreshPrintBtn();
+  }
+}
+$('#printBtn').addEventListener('click', doPrint);
+window.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'p') { e.preventDefault(); doPrint(); }
+});
+
+/* ───────── boot ───────── */
+buildSwatches();
+bindInputs();
+syncUI();
+setConn();
+if (!('bluetooth' in navigator)) setMsg('このブラウザでは印刷できません。Mac の Chrome か Edge で開いてください。プレビューと PNG 保存は使えます。', 'error');
+if (S.source === 'image') { S.source = 'text'; syncUI(); }  // images are not persisted
+schedule(true);
+document.fonts?.ready?.then(() => schedule(true));
+})();
+</script>
+</body>
+</html>

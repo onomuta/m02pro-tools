@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>M02 Pro ツール</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700&family=Zen+Maru+Gothic:wght@900&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--bg:#E9EDF1;--card:#FFFFFF;--line:#D6DCE2;--ink:#1F2630;--muted:#677180;--shadow:rgba(28,40,60,.16)}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){color-scheme:dark;--bg:#171B21;--card:#222831;--line:#333B46;--ink:#E7EAEE;--muted:#9AA3AF;--shadow:rgba(0,0,0,.5)}
+}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#171B21;--card:#222831;--line:#333B46;--ink:#E7EAEE;--muted:#9AA3AF;--shadow:rgba(0,0,0,.5)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;background:var(--bg);color:var(--ink);font-family:"Zen Kaku Gothic New","Hiragino Sans",system-ui,sans-serif;font-weight:500;line-height:1.6;font-feature-settings:"palt";-webkit-font-smoothing:antialiased;
+  padding:calc(48px + env(safe-area-inset-top,0px)) 16px calc(48px + env(safe-area-inset-bottom,0px))}
+main{max-width:720px;margin:0 auto}
+h1{font-size:15px;font-weight:700;margin:0 0 4px;letter-spacing:.02em}
+.lead{color:var(--muted);font-size:13px;margin:0 0 28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+a.tool{display:flex;flex-direction:column;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;
+  box-shadow:0 10px 30px -20px var(--shadow);transition:transform .15s ease,box-shadow .15s ease}
+a.tool:hover{transform:translateY(-2px);box-shadow:0 16px 34px -18px var(--shadow)}
+a.tool:focus-visible{outline:3px solid #3D9BE9;outline-offset:3px}
+.thumb{height:150px;display:flex;align-items:flex-end;justify-content:center;padding-top:22px;position:relative}
+.thumb::before{content:"";position:absolute;top:18px;left:50%;transform:translateX(-50%);width:150px;height:14px;border-radius:7px;background:#1C1F24}
+.paper{position:relative;width:120px;height:120px;background:#fff;margin-top:6px;box-shadow:0 8px 16px -8px var(--shadow);padding:12px 12px 0;
+  font-family:"Zen Maru Gothic",sans-serif;color:#1C2030;overflow:hidden}
+.t1{background:#C8CDD3}
+.t2{background:#E6EFF5}
+.bars i{display:block;height:10px;margin-bottom:6px;background:repeating-linear-gradient(90deg,#1C2030 0 2px,#fff 2px 4px)}
+.bars i:nth-child(1){background:#1C2030}
+.bars i:nth-child(3){background:repeating-linear-gradient(90deg,#1C2030 0 1px,#fff 1px 5px)}
+.bars i:nth-child(4){width:60%;background:repeating-linear-gradient(45deg,#1C2030 0 2px,#fff 2px 5px)}
+.kk b{display:block;font-size:13px;font-weight:900;line-height:1.55;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kk b:first-child{background:#1C2030;color:#fff;border-radius:4px;padding:0 6px;margin-bottom:4px}
+.body{padding:16px 18px 18px;border-top:1px solid var(--line)}
+.body h2{margin:0;font-size:17px;font-weight:700}
+.body p{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.notes{margin-top:28px;font-size:12.5px;color:var(--muted)}
+.notes p{margin:0 0 6px}
+</style>
+</head>
+<body>
+<main>
+  <h1>M02 Pro ツール</h1>
+  <p class="lead">感熱プリンター M02 Pro に、ブラウザから直接印刷するツール集です。</p>
+  <div class="grid">
+    <a class="tool" href="kuku/">
+      <div class="thumb t2" aria-hidden="true"><div class="paper kk"><b>2 のだん</b><b>2 × 1 = 2</b><b>2 × 2 = 4</b><b>2 × 3 = 6</b><b>2 × 4 = 8</b></div></div>
+      <div class="body"><h2>くくプリント</h2><p>選んだ段の九九一覧と、今日の運勢を印刷します。</p></div>
+    </a>
+    <a class="tool" href="studio/">
+      <div class="thumb t1" aria-hidden="true"><div class="paper bars"><i></i><i></i><i></i><i></i></div></div>
+      <div class="body"><h2>プリントスタジオ</h2><p>テキスト・画像・パターンを、ディザを選んで印刷します。</p></div>
+    </a>
+  </div>
+  <div class="notes">
+    <p>印刷には Bluetooth を使うため、Mac・PC・Android の Chrome か Edge で開いてください。iPhone では Bluefy から開くと使える場合があります。</p>
+  </div>
+</main>
+</body>
+</html>
